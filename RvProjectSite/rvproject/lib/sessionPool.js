@@ -19,7 +19,7 @@ dbCon.execute(sql, function (err, results, fields) {
 });
 
 // Now that the session database and table exists, create a MySQL pool so it can be hooked up to expression session storage
-var dbConnectionInfo = require("../connectioninfo");
+var dbConnectionInfo = require("./connectioninfo");
 
 var options = {
   host: dbConnectionInfo.host,
