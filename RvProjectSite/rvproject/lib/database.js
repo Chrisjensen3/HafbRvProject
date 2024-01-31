@@ -1,7 +1,7 @@
 let mysql = require("mysql2");
 //const { dateStrings } = require("./connectioninfo");
 
-var dbConnectionInfo = require("../connectioninfo");
+var dbConnectionInfo = require("./connectioninfo");
 
 var con = mysql.createConnection({
   host: dbConnectionInfo.host,
