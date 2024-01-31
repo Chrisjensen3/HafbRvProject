@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Famcamp Home</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="font/bootstrap-icons.css" />
+    <style>
+      .border-right {
+        border-right: 1px solid darkgray;
+      }
+      #Button {
+        border-radius: 0;
+        background-image: linear-gradient(to top, #01337e 0%, #0d6efd 100%);
+
+        text-shadow: 1px 1px 2px #0d6efd;
+        outline: 3px groove lightgray;
+        border: 1.5px solid #0d6efd;
+      }
+      #Button:hover {
+        background-image: linear-gradient(to top, #01337e 0%, #01337e 100%);
+      }
+      .footerLabel {
+        font-size: 120%;
+        text-shadow: 1px 1px 2px lightslategray;
+      }
+      .Header {
+        color: #0d6efd;
+        text-shadow: 1px 1px 2px white;
+      }
+    </style>
+  </head>
+  <body class="bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a
+        href="/"
+        class="text-secondary ps-2"
+        style="text-decoration: none; padding-top: 0.2rem"
+        ><img
+          src="images/airforce.png"
+          class="nav-link text-secondary text-decoration-none tracking-wide"
+          style="border-radius: 25px; display: inline-block"
+          width="45"
+          height="45"
+          alt=""
+        />&nbsp;&nbsp;HILL AFB FAMCAMP</a
+      >
+      <a class="navbar-brand" href="#"></a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#rvNavbar"
+        aria-controls="rvNavbar"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="rvNavbar">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              onclick="event.preventDefault(); showMap();"
+              style="cursor: pointer"
+              >&emsp;MAP</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="navbar-nav ml-autod-md-block">
+        <% if(session.loggedIn) { %>
+          <li class="nav-item" style="margin: 0.4rem 0 0 0; padding-right: 1rem; font-size: 110%">
+            <i>Welcome &nbsp;<b style="font-weight: 550; color:#01337e"><%= session.firstName %> <%= session.lastName %>: <%= session.email %>&nbsp;&nbsp;</b></i>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              style="margin-left: 1rem; padding-right: 1rem"
+              href="/logout"
+              >LOGOUT</a
+            >
+          </li>
+        <% } else { %>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            style="margin-left: 1rem; padding-right: 1rem"
+            href="/register"
+            >REGISTER</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            style="margin-left: 1rem; padding-right: 1rem"
+            href="/login"
+            >LOGIN</a
+          >
+        </li>
+        <% } %>
+      </div>
+    </nav>
+    <div id="homeContent" style="display: block">
+      <div
+        class="container-fluid text-center p-3 m-0 ps-4"
+        style="background-color: #01337e"
+      >
+        <div class="row d-flex justify-content-between w-100">
+          <h2
+            style="letter-spacing: 4px; color: lightgray; margin-bottom: 1rem"
+          >
+            HILL AFB FAMCAMP
+          </h2>
+          <h5 class="text-light">
+            Welcome to Hill AFB’s on-base RV campground. On this page you can
+            find a variety of resources, rules, and regulations for your stay.
+          </h5>
+        </div>
+      </div>
+
+      <div class="row vw-100">
+        <div class="vw-100 bg-secondary">
+          <div
+            class="container-fluid py-5 text-light text-center m-0 p-0 w-100"
+            style="
+              background-image: linear-gradient(to bottom, transparent, black),
+                url(/images/rv2.jpg);
+              background-size: cover;
+              background-repeat: no-repeat;
+              filter: brightness(200%);
+            "
+          >
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <% if(session.loggedIn) { %>
+              <div style="filter: brightness(50%)">
+                <a href="/sites"
+                  ><button
+                    id="Button"
+                    class="btn btn-primary btn-lg pb-2"
+                    type="button"
+                  >
+                    Click Here for Fam Camp Reservation
+                  </button></a
+                >
+              </div>
+            <% } else { %>
+            <div style="filter: brightness(50%)">
+              <a href="/login"
+                ><button
+                  id="Button"
+                  class="btn btn-primary btn-lg pb-2"
+                  type="button"
+                >
+                  Click Here for Fam Camp Reservation
+                </button></a
+              >
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="container-sm mt-3">
+        <hr class="featurette-divider text-light" />
+
+        <div class="row text-light">
+          <h2 class="text-center Header mb-4">Pricing</h2>
+        </div>
+        <div class="row text-light text-center">
+          <div class="col-4">
+            <p class="border-right" style="font-size: 115%">
+              $40 per day for premium full hookups
+            </p>
+          </div>
+          <div class="col-4">
+            <p class="border-right pe-3" style="font-size: 115%">
+              $35 per day for regular full hookups
+            </p>
+          </div>
+          <div class="col-4 pe-4">
+            <p style="font-size: 115%">$20 per day dry camping no hookups</p>
+          </div>
+        </div>
+        <hr class="featurette-divider text-light" />
+        <div class="row align-items-stretch d-flex flex-column flex-md-row">
+          <div class="col-12 col-md-6 my-auto">
+            <img
+              src="images/amenities.png"
+              alt=""
+              style="width: 100%; margin: auto; display: block"
+            />
+          </div>
+          <div
+            class="col-12 col-md-6 text-light justify-content-center my-auto"
+          >
+            <h2 class="text-center Header">Amenities</h2>
+            <div class="w-80 p-4">
+              <p>
+                <b class="footerLabel">Rec room:</b> &nbsp;Features include
+                microwave, dining area, TV lounge, study room, book exchange and
+                Wi-Fi is available in or near the building. Stop by the office
+                to check out our free DVD rentals Monday thru Friday from
+                0800-1600.
+              </p>
+              <p>
+                <b class="footerLabel">Laundry:</b> &nbsp;Machines cost $1.00
+                per cycle and a coin machine is available in the laundry room.
+                Please do not launder pet bedding or heavily soiled items in
+                these machines.
+              </p>
+              <p>
+                <b class="footerLabel">Ice:</b> &nbsp;Available in the laundry
+                room free of charge. Please refrain from filling large ice
+                chests.
+              </p>
+            </div>
+          </div>
+        </div>
+        <hr class="featurette-divider text-light" />
+        <div
+          class="row align-items-stretch d-flex flex-column-reverse flex-md-row"
+        >
+          <div class="col-12 col-md-6 text-light my-auto">
+            <h2 class="text-center Header">Reservations and Cancelations</h2>
+            <div class="w-80 p-4">
+              <p>
+                <b class="footerLabel">Reservations:</b> &nbsp; Can be made up
+                to 6 months in advance and must be paid in full at time of
+                reservation.
+              </p>
+              <p>
+                <b class="footerLabel">Cancellations:</b> &nbsp; Made at least 4
+                days prior will be charged a $10.00 fee. Cancellations made less
+                than 3 days prior will be charged a one-day fee. Cancellation
+                for holidays or special events will be charged a $25.00 fee.
+              </p>
+              <p>
+                <b class="footerLabel">Maximum length of stay:</b>&nbsp;
+                April-October is 14 consecutive days except for those traveling
+                on PCS orders. Long term stays are allowed October 15th-April
+                1st. For detailed information on this policy, please contact the
+                FamCamp Office.
+              </p>
+              <p>
+                <b class="footerLabel">Payment:</b>&nbsp; Can be made with card
+                or cash in the office during regular hours. We do not accept
+                Discover Cards. After hours arrivals must pay cash only and use
+                the check-in booth located next to the office. Personal checks
+                are not accepted.
+              </p>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 my-auto">
+            <img
+              class="w-100"
+              src="https://koa.com/content/images/ways-to-stay/rv/02-rv-sites-with-koa-patio.jpg"
+              alt=""
+              style="width: 80%; margin: auto; display: block"
+            />
+          </div>
+        </div>
+        <hr class="featurette-divider text-light" />
+        <div class="row align-items-stretch d-flex flex-column flex-md-row">
+          <div class="col-12 col-md-6 my-auto">
+            <img
+              class="w-100"
+              src="https://koa.com/content/images/ways-to-stay/rv/02-rv-sites-with-koa-patio.jpg"
+              alt=""
+              style="width: 80%; margin: auto; display: block"
+            />
+          </div>
+          <div class="col-12 col-md-6 text-light my-auto">
+            <h2 class="text-center Header">Guidelines</h2>
+            <div class="w-80 p-4">
+              <p>
+                In an effort to ensure compliance with all public health and
+                safety requirements, RVs are subject to inspection when
+                conditions observed from the exterior of the RV suggest a
+                potential hazard or substandard condition exist within the unit.
+                In the event of an inspection, all RV units must be able to
+                demonstrate the following:
+              </p>
+              <p>
+                &bull; Proper connection to the park’s fresh water system using
+                the unit’s exterior water connection. The fresh water connector
+                on the unit should be inspected to insure it is leak-free and
+                made out of a material approved for potable water.
+              </p>
+              <p>
+                &bull; Power cord and/or approved adapter is approved for RV use
+                and maintained in a safe operating condition.
+              </p>
+              <p>
+                &bull; The sewer drain connection on the unit must be gas tight
+                and leak-free. Hose must be constructed of minimum schedule 40
+                ABS plastic approved for drain and waste.
+              </p>
+            </div>
+          </div>
+        </div>
+        <hr class="featurette-divider text-light" />
+        <div
+          class="row align-items-stretch d-flex flex-column-reverse flex-md-row"
+        >
+          <div class="col-12 col-md-6 text-light my-auto">
+            <h2 class="text-center Header">Pets</h2>
+            <div class="w-80 p-4">
+              <p>
+                Leashed and vaccinated pets are welcome provided pet owners
+                adhere to the following installation requirements:
+              </p>
+              <p>
+                &bull; Animal waste will be picked up and properly disposed of
+                immediately.
+              </p>
+              <p>
+                &bull; Pets will remain on a leash in control of the owner
+                unless in the designated dog park area. When using the dog park,
+                the pet owner must be present at all times.
+              </p>
+              <p>
+                &bull; Dogs will not be chained outdoors or left unattended at
+                any time.
+              </p>
+              <p>
+                &bull; In consideration of other guests, nuisance pet behavior
+                will not be permitted. This includes but is not limited to pets
+                that display aggression or excessive barking.
+              </p>
+              <p>&bull; 2 pet maximum.</p>
+              <p>
+                &bull; Dogs with any of the following breed lineage are
+                restricted from FamCamp: Pit bulls, Staffordshire Terriers,
+                Rottweilers, Chow Chows, Doberman Pinschers, wolf hybrids
+              </p>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 my-auto">
+            <img
+              src="https://koa.com/blog/images/camping-gear-for-pets.jpg?preset=heroimagecropped"
+              alt=""
+              style="width: 100%; margin: auto; display: block"
+            />
+          </div>
+        </div>
+        <hr class="featurette-divider text-light" />
+        <div class="row align-items-stretch d-flex flex-column flex-md-row">
+          <div class="col-12 col-md-6 my-auto">
+            <img
+              src="https://uprootedtraveler.com/wp-content/uploads/uprooted-traveler-guide-to-camping-in-casino-parking-lots-in-your-rv.jpeg"
+              alt=""
+              style="width: 100%; margin: auto; display: block"
+            />
+          </div>
+          <div
+            class="col-12 col-md-6 text-light text-center justify-content-center my-auto"
+          >
+            <div class="">
+              <h2 class="Header">Parking</h2>
+              <p style="font-size: 115%">
+                Vehicles are only allowed to park in their assigned spaces.
+                Parking on vacant sites or roadways is not authorized. Please
+                see Camp Host or Staff for information on overflow parking and
+                visitor areas. No parking on the grass.
+              </p>
+            </div>
+          </div>
+        </div>
+        <br />
+        <hr class="featurette-divider text-light" />
+
+        <footer>
+          <div class="row text-light text-center">
+            <div class="col-8 text-center mx-auto">
+              <h2 class="text-secondary">About Us</h2>
+              <p>
+                Our campsite is run by a team of passionate individuals who have
+                a deep love and respect for the outdoors. We understand the
+                importance of family time and creating lasting memories, which
+                is why we have created a safe and enjoyable environment for
+                families to relax and reconnect.
+              </p>
+            </div>
+          </div>
+          <div class="row text-light">
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Hours</h3>
+              <div class="w-80 p-4">
+                <h5><b>Office Hours Mon – Fri</b></h5>
+                <p>0800 – 1600</p>
+                <h5><b>Office Hours Sat – Sun</b></h5>
+                <p>Closed</p>
+                <h5><b>Check In</b></h5>
+                <p>After 1300</p>
+                <h5><b>Check Out</b></h5>
+                <p>Before 1200</p>
+                <h5><b>Quiet Hours</b></h5>
+                <p>
+                  2200 – 0800 -
+                  <i>Generators are not permitted during quiet hours.</i>
+                </p>
+              </div>
+            </div>
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Contact Us</h3>
+              <div class="w-80 p-4">
+                <h5><b>Phone</b></h5>
+                <p>(801) 775-3250</p>
+                <h5><b>Address</b></h5>
+                <p>5622 Park Lane, Bldg. 564 Hill AFB, UT 84056</p>
+              </div>
+            </div>
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Mailing Information</h3>
+              <div class="w-80 p-4">
+                <h5><b>USPS</b></h5>
+                <p>
+                  Your Name and Site # <br />
+                  FamCamp<br />
+                  7338 Loncki St.<br />
+                  Hill AFB, UT 84056
+                </p>
+                <p>
+                  Regular Mail can be picked up at the Base Post Office Bldg.
+                  344
+                </p>
+                <h5><b>UPS and FedEx</b></h5>
+                <p>
+                  Your Name<br />
+                  FamCamp Bldg 564 Site #<br />
+                  5622 Park Lane<br />
+                  Hill AFB, UT 84056
+                </p>
+                <p>Parcels are delivered to the office.</p>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <div id="homeMap" style="display: none" onclick="showMap()">
+      <img class="map w-100" src="/images/famcamp-map.png" alt="FamCamp Map" />
+    </div>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".dropdown-toggle").dropdown();
+      });
+    </script>
+    <script>
+      function showMap() {
+        const mapContainer = document.getElementById("homeMap");
+        const body = document.getElementById("homeContent");
+        mapContainer.style.display =
+          mapContainer.style.display === "none" ? "block" : "none";
+        body.style.display = body.style.display === "block" ? "none" : "block";
+      }
+    </script>
+  </body>
+</html>

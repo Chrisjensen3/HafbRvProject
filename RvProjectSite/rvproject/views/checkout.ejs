@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Famcamp Checkout</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="font/bootstrap-icons.css" />
+
+    <script>
+      //define validate function
+      function validate(event) {
+        //check if yes-no is selected
+        var yesNo = document.getElementById("yes-no").value;
+        let email = document.getElementById("email").value;
+        let paymentFirstName = document.getElementById("paymentFirstName").value;
+        let paymentLastName = document.getElementById("paymentLastName").value;
+        let phone = document.getElementById("phone").value;
+        let creditCard = document.getElementById("creditCard").value;
+        let expiryDate = document.getElementById("expiryDate").value;
+        let cvv = document.getElementById("cvv").value;
+        let zip = document.getElementById("zip").value;
+
+        if (yesNo == "") {
+          document.getElementById("message").innerHTML =
+            "Please select an option for base access.";
+          event.preventDefault();
+          return false;
+        } else if (yesNo == "no") {
+          document.getElementById("message").innerHTML =
+            "Everyone In group must have base access in order to book reservation.";
+          event.preventDefault();
+          return false;
+        } else if (email == "" || paymentFirstName == "" || paymentLastName == "" || phone == "" || creditCard == "" || expiryDate == "" || cvv == "" || zip == ""){
+          document.getElementById("message").innerHTML = "Please fill out the entire form.";
+          event.preventDefault();
+        } 
+        else {
+          return true;
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a
+        href="/"
+        class="text-secondary ps-2"
+        style="text-decoration: none; padding-top: 0.2rem"
+        ><img
+          src="images/airforce.png"
+          class="nav-link text-secondary text-decoration-none tracking-wide"
+          style="border-radius: 25px; display: inline-block"
+          width="45"
+          height="45"
+          alt=""
+        />&nbsp;&nbsp;HILL AFB FAMCAMP</a
+      >
+      <a class="navbar-brand" href="#"></a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#rvNavbar"
+        aria-controls="rvNavbar"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="rvNavbar">
+        <ul class="navbar-nav mr-auto">
+          <% if(session.userTypeId == 1 || session.userTypeId == 2) { %>
+          <li class="nav-item active">
+            <a class="nav-link" href="/admin">&emsp;REPORTS</a>
+          </li>
+          <% } %>
+          <li class="nav-item active">
+            <a class="nav-link" href="/sites">&emsp;SITES</a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              onclick="event.preventDefault(); showMap();"
+              style="cursor: pointer"
+              id="mapLink"
+              >&emsp;MAP</a
+            >
+          </li>
+        </ul>
+      </div>
+      
+      <div class="navbar-nav ml-autod-md-block">
+        <li class="nav-item" style="margin: 0.4rem 0 0 0; padding-right: 1rem; font-size: 110%">
+          <i>Welcome &nbsp;<b style="font-weight: 550; color:#01337e"><%= session.firstName %> <%= session.lastName %>: <%= session.email %>&nbsp;&nbsp;</b></i>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            style="margin-left: 1rem; padding-right: 1rem"
+            href="/logout"
+            >LOGOUT</a
+          >
+        </li>
+      </div>
+    </nav>
+    <div id="checkoutContent" style="display: block">
+      <div
+        class="container-fluid text-center pt-3 pb-2 m-0"
+        style="background-color: #01337e"
+      >
+        <div class="row d-flex justify-content-between w-100">
+          <h2 class="ms-2" style="letter-spacing: 4px; color: lightgray">
+            HILL AFB FAMCAMP
+          </h2>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mt-4">
+            <!-- <div class="p-2" style="background-color: #ffffff"> -->
+            <!-- <div class="container text-center p-3 mb-3" style="background-color: #01337e"> -->
+            <% if(session.itemsInCart && session.itemsInCart.length > 0 && parseInt(session.itemsInCart[0].siteTypeId) != 6) { %>  
+            <div id="checkoutCard" class="card">
+              <div
+                class="card-header text-white"
+                style="background-color: #01337e; text-align: center"
+              >
+                <h2>Checkout</h2>
+              </div>
+              <div class="card-body">
+                <% if(session.itemsInCart) { %>
+                  <% if(session.cartTotal < 0 || (session.newReservation && Object.keys(session.newReservation).length !== 0 && session.newReservation.cancel == false)) { %>
+                  <h3 class="card-title pb-2 pt-2">Credit Card Information to Process Refund</h3>
+                  <% } %>
+                <% } else { %>
+                  <h3 class="card-title pb-2 pt-2">Payment Information</h3>
+                <% } %>
+                <form
+                  id="checkoutForm" 
+                  method="POST"
+                  action="/checkout"
+                  onsubmit="return validate(event)"
+                >
+                  <div class="input-group mb-2">
+                    <span class="input-group-text bg-primary">
+                      <i class="bi bi-person-plus-fill text-white"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="paymentFirstName"
+                      name="paymentFirstName"
+                      autofocus="autofocus"
+                      placeholder="Enter card holder's first name"
+                      required
+                    />
+                  </div>
+                  <div class="input-group mb-2">
+                    <span class="input-group-text bg-primary">
+                      <i class="bi bi-person-plus-fill text-white"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="paymentLastName"
+                      name="paymentLastName"
+                      placeholder="Enter card holder's last name"
+                      required
+                    />
+                  </div>
+                  <div class="input-group mb-2">
+                    <span class="input-group-text bg-primary">
+                      <i class="bi bi-telephone-plus-fill text-white"></i>
+                    </span>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      class="form-control"
+                      required="required"
+                      placeholder="Enter phone number"
+                    />
+                  </div>
+                  <div class="input-group mb-2">
+                    <span class="input-group-text bg-primary">
+                      <i class="bi bi-credit-card-fill text-white"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="creditCard"
+                      name="creditCard"
+                      placeholder="Enter credit card number"
+                      required
+                    />
+                  </div>
+                  <div class="input-group mb-2">
+                    <span class="input-group-text bg-primary">
+                      <i class="bi bi-credit-card-fill text-white"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="expiryDate"
+                      name="expiryDate"
+                      placeholder="MM/YY"
+                      required
+                    />
+                  </div>
+                  <div class="input-group mb-2">
+                    <span class="input-group-text bg-primary">
+                      <i class="bi bi-credit-card-fill text-white"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cvv"
+                      name="cvv"
+                      placeholder="Enter CVV"
+                      required
+                    />
+                  </div>
+                  <div class="input-group mb-2">
+                    <span class="input-group-text bg-primary">
+                      <i class="bi bi-house-add-fill text-white"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="zip"
+                      name="zip"
+                      placeholder="Enter zip code"
+                      required
+                    />
+                  </div>
+                   <input
+                    type="hidden"
+                    class="form-control"
+                    id="selectedUserId"
+                    name="selectedUserId"
+                    value="<%= session.selectedUserId %>"
+                  />
+                  <h3 class="card-title pb-2 pt-2">Additional Information</h3>
+                  <% if(session.cartTotal < 0) { %>
+                      <div class="input-group row">
+                    <div class="col-md-12">
+                      <label for="comments"
+                        >Would you like to leave any additional comments for
+                        your reservation change?</label
+                      >
+                    </div>
+                    <div class="col-md-12">
+                      <div class="input-group mb-2">
+                        <span class="input-group-text bg-primary">
+                          <i class="bi bi-caret-right-fill text-white"></i>
+                        </span>
+                        <textarea
+                          class="form-control"
+                          id="comments"
+                          name="comments"
+                          placeholder="Notes"
+                          rows="3"
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    type="hidden"
+                    class="form-control"
+                    id="arrivalTime"
+                    name="arrivalTime"
+                    style="display: inline-block; width: 78%"
+                    value="12:00"
+                  />
+                  <input
+                    type="hidden"
+                    class="form-control"
+                    id="yes-no"
+                    name="yes-no"
+                    style="display: inline-block; width: 78%"
+                    value="yes"
+                  />
+                  <% } else { %>
+                  <div class="row">
+                    <div>Estimated Arrival Time:</div>
+                  </div>
+                  <div
+                    class="input-group mb-2 w-50"
+                    style="margin-left: 0.8rem"
+                  >
+                    <div class="row">
+                      <span
+                        class="input-group-text bg-primary"
+                        style="width: 22%; display: inline-block"
+                      >
+                        <i class="bi bi-alarm-fill text-white"></i>
+                      </span>
+                      <input
+                        type="time"
+                        class="form-control"
+                        id="arrivalTime"
+                        name="arrivalTime"
+                        style="display: inline-block; width: 78%"
+                      />
+                      <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="input-group row">
+                    <div class="col-md-12">
+                      <label for="yes-no"
+                        >Does everyone in your group have base access?</label
+                      >
+                    </div>
+                    <div class="col-md-12">
+                      <div class="input-group mb-2">
+                        <span class="input-group-text bg-primary">
+                          <i class="bi bi-check-circle-fill text-white"></i>
+                        </span>
+                        <select
+                          class="form-control"
+                          id="yes-no"
+                          name="yes-no"
+                          required
+                        >
+                          <option value="">Select an option</option>
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- add additional comments input -->
+                  <div class="input-group row">
+                    <div class="col-md-12">
+                      <label for="comments"
+                        >Would you like to leave any additional comments for
+                        your reservation(s)?</label
+                      >
+                    </div>
+                    <div class="col-md-12">
+                      <div class="input-group mb-2">
+                        <span class="input-group-text bg-primary">
+                          <i class="bi bi-caret-right-fill text-white"></i>
+                        </span>
+                        <textarea
+                          class="form-control"
+                          id="comments"
+                          name="comments"
+                          placeholder="Notes"
+                          rows="3"
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+                  
+                  <div>
+                    <p id="message" class="text-danger" style="height: 20px">
+                      <%- locals.message %>
+                    </p>
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-primary w-25">
+                      Submit
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- When booking a host site, change the view -->
+            <% } else if(session.itemsInCart && session.itemsInCart.length > 0 && parseInt(session.itemsInCart[0].siteTypeId) == 6) { %>
+            <div id="hostSiteCard" class="card">
+              <div
+                class="card-header text-white"
+                style="background-color: #01337e; text-align: center"
+              >
+                <h2>Complete Reservation for Host Site</h2>
+              </div>
+              <div class="card-body">
+                <form
+                  id="hostForm" 
+                  method="POST"
+                  action="/invoice"
+                >
+                  <h3 class="card-title pb-2 pt-2">Additional Information</h3>
+                   <div class="input-group row">
+                    <div class="col-md-12">
+                      <label for="comments"
+                        >Would you like to leave any additional comments for
+                        the host site reservation?</label
+                      >
+                    </div>
+                    <div class="col-md-12">
+                      <div class="input-group mb-2">
+                        <span class="input-group-text bg-primary">
+                          <i class="bi bi-caret-right-fill text-white"></i>
+                        </span>
+                        <textarea
+                          class="form-control"
+                          id="comments"
+                          name="comments"
+                          placeholder="Notes"
+                          rows="3"
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p id="message" class="text-danger" style="height: 20px">
+                      <%- locals.message %>
+                    </p>
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-primary w-25">
+                      Complete Reservation
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <% } %>
+            <!-- </div> -->
+            <!-- </div> -->
+          </div>
+          <div class="col-sm mt-4">
+            <% if (session.itemsInCart && session.itemsInCart.length > 0) { %>
+              <% console.log("There are items in the cart: " + JSON.stringify(session.itemsInCart)) %>
+              <!-- get cart details to display in cart -->
+              <div id="cartWithItems" class="card">
+                <div
+                  class="card-header text-white"
+                  style="background-color: #01337e; text-align: center"
+                >
+                  <% if (session.otherUser && Object.keys(session.otherUser).length !== 0) { %>
+                  <h5 class="card-header"><%= session.otherUser.firstName %> <%= session.otherUser.lastName %>'s Cart</h5>
+                  <% } else if (session.reservation && Object.keys(session.reservation).length !== 0) { %>
+                  <h5 class="card-header"><%= session.reservation.firstName %> <%= session.reservation.lastName %>'s Cart</h5>
+                  <% } else if (session.newReservation && Object.keys(session.newReservation).length !== 0) { %>
+                  <h5 class="card-header"><%= session.newReservation.firstName %> <%= session.newReservation.lastName %>'s Cart</h5>
+                  <% } else { %>
+                  <h5 class="card-header"><%= session.firstName %> <%= session.lastName %>'s Cart</h5>
+                  <% } %>
+                </div>
+                <% let total = 0; %>
+                <% for (let i = 0; i < session.itemsInCart.length; i++) { %>
+                  <ul class="list-group list-group-flush">
+                      <li class="list-group-item">
+                        <% if (session.itemsInCart[i].resChangeNotice) { %>
+                          <h5 class="text-center"><b><%- session.itemsInCart[i].resChangeNotice %></b></h5>  
+                        <% } else if (session.itemsInCart[i].resUpdateNotice) { %>
+                          <h5 class="text-center"><b><%- session.itemsInCart[i].resUpdateNotice %></b></h5>
+                        <% } %>
+                        <h6><b>Site:</b> <%- session.itemsInCart[i].siteName %></h6> 
+                        <h6><b>Site Type:</b> <%- session.itemsInCart[i].siteType %></h6>
+                        <h6><b>Site Rate:</b> $<%- session.itemsInCart[i].siteRate %></h6>
+                        <% if(session.newReservation && Object.keys(session.newReservation).length !== 0 && session.newReservation.cancel == true) { %>
+                        <h6><b>Dates:</b> <%- session.newReservation.newCheckIn %> - <%- session.newReservation.newCheckOut %></h6>
+                        <% } else { %>
+                        <h6><b>Dates:</b> <%- session.itemsInCart[i].checkIn %> - <%- session.itemsInCart[i].checkOut %></h6>
+                        <% } %>
+                        <% if (session.itemsInCart[i].resUpdateNotice) { %>
+                        <h6><b>Difference in Days:</b> <%- session.itemsInCart[i].numDays %> days</h6>
+                        <% } else { %>
+                        <h6><b>Days:</b> <%- session.itemsInCart[i].numDays %> days</h6>
+                        <% } %>
+                        <h6><b>Subtotal:</b> $<%- parseFloat(session.itemsInCart[i].subtotal).toFixed(2) %></h6>
+                        <% if (session.itemsInCart[i].cancelFee) { %>
+                          <h6><b>Cancel Fee:</b> $<%- parseFloat(session.itemsInCart[i].cancelFee).toFixed(2) %></h6>  
+                        <% } %>
+                      </li>
+                  </ul>
+                <% } %>
+                <div class="card-body text-center">
+                  <% if(session.newReservation && Object.keys(session.newReservation).length !== 0 && session.newReservation.cancel === true) { %>
+                      <h4>Total: $<%- session.newReservation.subtotal.toFixed(2) %></h4>
+                  <% } else { %>
+                  <h4>Total: $<%- session.cartTotal.toFixed(2) %> </h4>
+                  <% } %>
+                </div>
+              </div>
+            <% } else { %>
+              <div id="cartWithoutItems" class="card">
+                <div
+                  class="card-header text-white"
+                  style="background-color: #01337e; text-align: center"
+                >
+                  <% if (session.otherUser && Object.keys(session.otherUser).length !== 0) { %>
+                  <h5 class="card-header"><%= session.otherUser.firstName %> <%= session.otherUser.lastName %>'s Cart</h5>
+                  <% } else if (session.reservation && Object.keys(session.reservation).length !== 0) { %>
+                  <h5 class="card-header"><%= session.reservation.firstName %> <%= session.reservation.lastName %>'s Cart</h5>
+                  <% } else if (session.newReservation && Object.keys(session.newReservation).length !== 0) { %>
+                  <h5 class="card-header"><%= session.newReservation.firstName %> <%= session.newReservation.lastName %>'s Cart</h5>
+                  <% } else { %>
+                  <h5 class="card-header"><%= session.firstName %> <%= session.lastName %>'s Cart</h5>
+                  <% } %>
+                </div>
+                <div class="card-body text-center">
+                  <h5 class="card-title">Your cart is empty</h5>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        </div>
+       
+        <br />
+        <hr class="featurette-divider text-light" />
+        <br />
+        <div class="container-sm mt-3">
+          <footer>
+            <div class="row text-light text-center">
+              <div class="col-8 text-center mx-auto">
+                <h2 class="text-secondary">About Us</h2>
+                <p>
+                  Our campsite is run by a team of passionate individuals who
+                  have a deep love and respect for the outdoors. We understand
+                  the importance of family time and creating lasting memories,
+                  which is why we have created a safe and enjoyable environment
+                  for families to relax and reconnect.
+                </p>
+              </div>
+            </div>
+            <div class="row text-light">
+              <div class="col-4">
+                <h3 class="text-center text-secondary">Hours</h3>
+                <div class="w-80 p-4">
+                  <h5><b>Office Hours Mon – Fri</b></h5>
+                  <p>0800 – 1600</p>
+                  <h5><b>Office Hours Sat – Sun</b></h5>
+                  <p>Closed</p>
+                  <h5><b>Check In</b></h5>
+                  <p>After 1300</p>
+                  <h5><b>Check Out</b></h5>
+                  <p>Before 1200</p>
+                  <h5><b>Quiet Hours</b></h5>
+                  <p>
+                    2200 – 0800 -
+                    <i>Generators are not permitted during quiet hours.</i>
+                  </p>
+                </div>
+              </div>
+              <div class="col-4">
+                <h3 class="text-center text-secondary">Contact Us</h3>
+                <div class="w-80 p-4">
+                  <h5><b>Phone</b></h5>
+                  <p>(801) 775-3250</p>
+                  <h5><b>Address</b></h5>
+                  <p>5622 Park Lane, Bldg. 564 Hill AFB, UT 84056</p>
+                </div>
+              </div>
+              <div class="col-4">
+                <h3 class="text-center text-secondary">Mailing Information</h3>
+                <div class="w-80 p-4">
+                  <h5><b>USPS</b></h5>
+                  <p>
+                    Your Name and Site # <br />
+                    FamCamp<br />
+                    7338 Loncki St.<br />
+                    Hill AFB, UT 84056
+                  </p>
+                  <p>
+                    Regular Mail can be picked up at the Base Post Office Bldg.
+                    344
+                  </p>
+                  <h5><b>UPS and FedEx</b></h5>
+                  <p>
+                    Your Name<br />
+                    FamCamp Bldg 564 Site #<br />
+                    5622 Park Lane<br />
+                    Hill AFB, UT 84056
+                  </p>
+                  <p>Parcels are delivered to the office.</p>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+    <div id="checkoutMap" style="display: none" onclick="showMap()">
+      <img
+        width="100%"
+        class="map"
+        src="/images/famcamp-map.png"
+        alt="FamCamp Map"
+      />
+    </div>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" src="crypto-js.js"></script>
+    <script>
+      // For dropdown-toggle on mobile devices
+      $(document).ready(function () {
+        $(".dropdown-toggle").dropdown();
+      });
+
+      // Shows map on navbar click
+      function showMap() {
+        const mapContainer = document.getElementById("checkoutMap");
+        const body = document.getElementById("checkoutContent");
+        mapContainer.style.display =
+          mapContainer.style.display === "none" ? "block" : "none";
+        body.style.display = body.style.display === "block" ? "none" : "block";
+      }
+    </script>
+  </body>
+</html>

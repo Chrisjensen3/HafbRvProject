@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Existing Reservations</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="node_modules/jquery-ui/themes/base/all.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <style>
+      .hidden {
+        display: none !important;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  </head>
+
+  <body class="bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a
+        href="/"
+        class="text-secondary ps-2"
+        style="text-decoration: none; padding-top: 0.2rem"
+        ><img
+          src="images/airforce.png"
+          class="nav-link text-secondary text-decoration-none tracking-wide"
+          style="border-radius: 25px; display: inline-block"
+          width="45"
+          height="45"
+          alt=""
+        />&nbsp;&nbsp;HILL AFB FAMCAMP</a
+      >
+      <a class="navbar-brand" href="#"></a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#rvNavbar"
+        aria-controls="rvNavbar"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="rvNavbar">
+        <ul class="navbar-nav mr-auto">
+          <% if(session.userTypeId == 1 || session.userTypeId == 2) { %>
+          <li class="nav-item active">
+            <a class="nav-link" href="/admin">&emsp;REPORTS</a>
+          </li>
+          <% } %>
+          <li class="nav-item active">
+            <a class="nav-link" href="/sites">&emsp;SITES</a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              onclick="event.preventDefault(); showMap();"
+              style="cursor: pointer"
+              id="mapLink"
+              >&emsp;MAP</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="navbar-nav ml-autod-md-block">
+        <li class="nav-item" style="margin: 0.4rem 0 0 0; padding-right: 1rem; font-size: 110%">
+          <i>Welcome &nbsp;<b style="font-weight: 550; color:#01337e"><%= session.firstName %> <%= session.lastName %>: <%= session.email %>&nbsp;&nbsp;</b></i>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            style="margin-left: 1rem; padding-right: 1rem"
+            href="/logout"
+            >LOGOUT</a
+          >
+        </li>
+      </div>
+    </nav>
+    <div id="reservationsContent" style="display: block">
+      <div
+        class="container-fluid text-center pt-3 m-0"
+        style="background-color: #01337e"
+      >
+        <div class="row d-flex justify-content-between w-100">
+          <h2 class="ms-2" style="letter-spacing: 4px; color: lightgray">
+            HILL AFB FAMCAMP
+          </h2>
+          <p class="col-md-12 fs-4 text-light p-0">Reservations</p>
+        </div>
+      </div>
+      <!-- <hr class="featurette-divider text-light" /> -->
+
+      <!-- Main Reservation Container displays on regular desktop screen sizes > 768px -->
+      <div id="showAllReservations" class="container" style="display: block">
+        <div class="row text-center">
+          <!-- Functionality for selected reservation (ability to update and cancel)-->
+          <div class="col-md-12 mt-4 w-75 mx-auto">
+            <input
+              type="hidden"
+              name="allReservations"
+              id="allReservations"
+              value="<%= reservations %>"
+            />
+            <% for (var i = 0; i < reservations.length; i++) { %>
+            <form
+              method="post"
+              id="reservationForm<%= reservations[i].resId %>"
+            >
+              <div id="Card" class="card">
+                <div
+                  class="card-header text-white bg-secondary"
+                  style="text-align: center"
+                >
+                  <h3 class="text-light">
+                    <%= reservations[i].firstName %> <%=
+                    reservations[i].lastName %>
+                  </h3>
+                  <h5 style="color: lightgray">
+                    <b>Email:</b> &nbsp; <%= reservations[i].email %> &emsp;
+                    <b>Phone:</b>&nbsp; <%= reservations[i].phone %>
+                  </h5>
+                  <h5 class="pb-2" style="display: inline-block">
+                    <b style="font-size: 110%"
+                      >Site <%= reservations[i].siteName %>:</b
+                    >
+                    &emsp;<%= reservations[i].checkIn %> - <%=
+                    reservations[i].checkOut %>
+                  </h5>
+                </div>
+                <div class="container">
+                  <div class="row">
+                    <div class="col-md-8 mt-2 mb-2">
+                      <img
+                        src="<%= reservations[i].siteImage %>"
+                        class="img-fluid rounded"
+                        alt=""
+                      />
+                    </div>
+                    <div class="col-md mt-2">
+                      <div class="card">
+                        <div class="card-body p-1 pt-2">
+                          <h5 class="text-secondary">Rate</h5>
+                          <h5 class="text-primary" style="margin-top: -0.25rem">
+                            $<%= reservations[i].siteRate %> per Night
+                          </h5>
+                        </div>
+                        <ul class="list-group list-group-flush p-0">
+                          <li class="list-group-item text-center p-0 pt-1">
+                            <h5 class="text-secondary">Total Days</h5>
+                            <h5
+                              class="text-primary"
+                              style="margin-top: -0.25rem"
+                            >
+                              <%= reservations[i].diffDays %> nights
+                            </h5>
+                          </li>
+                          <li class="list-group-item p-0 pt-1">
+                            <h5 class="text-secondary">Total</h5>
+                            <h5
+                              class="text-primary"
+                              style="margin-top: -0.25rem"
+                            >
+                              $<%= Number(reservations[i].total).toFixed(2) %>
+                            </h5>
+                          </li>
+                          <li class="list-group-item p-0 pt-1">
+                            <h5 class="text-secondary">Reservation Status</h5>
+                            <h5
+                              class="text-primary"
+                              style="margin-top: -0.25rem"
+                            >
+                              <%= (reservations[i].status) %>
+                            </h5>
+                          </li>
+                        </ul>
+                        <div
+                          id="initialButtons<%= reservations[i].resId %>"
+                          class="list-group-item text-center d-flex justify-content-between p-0"
+                          style="display: block"
+                        >
+                        <% if(reservations[i].status === 'Canceled' || reservations[i].status === 'Completed') { %>
+                          <button
+                            class="btn col-6 pt-1 w-50 rounded-0"
+                            id="updateButton<%= reservations[i].resId %>"
+                            disabled
+                            style="background-color: lightgray"
+                          >
+                            <i class="bi bi-pencil-square"></i>
+                            &nbsp; Update
+                          </button>
+                          <button
+                            class="btn col-6 pt-1 w-50 rounded-0"
+                            id="cancelButton<%= reservations[i].resId %>"
+                            disabled
+                            style="background-color: lightgray"
+
+                          >
+                            <i class="bi bi-calendar2-x"></i>
+                            &nbsp; Cancel
+                          </button>
+                        <% } else { %>
+                          <button
+                            class="btn btn-success col-6 pt-1 w-50 rounded-0"
+                            id="updateButton<%= reservations[i].resId %>"
+                            onclick="event.preventDefault(); setAction('<%= reservations[i].resId %>', 'update'); updateRes(event, <%= JSON.stringify(reservations[i]) %>, '<%= reservations[i].resId %>')"
+                          >
+                            <i class="bi bi-pencil-square"></i>
+                            &nbsp; Update
+                          </button>
+                          <button
+                            class="btn btn-danger col-6 pt-1 w-50 rounded-0"
+                            id="cancelButton<%= reservations[i].resId %>"
+                            onclick="event.preventDefault(); setAction('<%= reservations[i].resId %>', 'cancel'); getCancelMessages(event, <%= JSON.stringify(reservations[i]) %>, '<%= reservations[i].resId %>')"
+                          >
+                            <i class="bi bi-calendar2-x"></i>
+                            &nbsp; Cancel
+                          </button>
+                        <% } %>
+                        </div>
+                        <div
+                          id="updateErrorSection<%= reservations[i].resId %>"
+                          style="display: none"
+                        >
+                          <h5 class="text-danger mt-2 mb-3">Update Error</h5>
+                          <div
+                            id="updateErrorMessage<%= reservations[i].resId %>"
+                            class="text-danger mb-3"
+                          ></div>
+                          <button
+                            id="closeUpdateButton<%= reservations[i].resId %>"
+                            class="btn btn-secondary col-6 pt-1 w-50 rounded-0 mb-4"
+                            onclick="closeUpdateError(event, '<%= reservations[i].resId %>')"
+                          >
+                            <i class="bi bi-x-square"></i>
+                            &nbsp; Close
+                          </button>
+                        </div>
+                        <div
+                          id="resChangeNoticeSection<%= reservations[i].resId %>"
+                          style="display: none"
+                        >
+                          <h5 class="text-danger mt-2 mb-3">Cancel Notice</h5>
+                          <div
+                            id="resChangeNoticeMessage<%= reservations[i].resId %>"
+                            class="text-danger mb-3"
+                          ></div>
+                          <div
+                            class="list-group-item text-center d-flex justify-content-between p-0"
+                          >
+                            <button
+                              id="confirmCancelButton<%= reservations[i].resId %>"
+                              class="btn btn-primary col-6 pt-1 w-50 rounded-0"
+                              onclick="cancelRes(event, <%= JSON.stringify(reservations[i]) %>)"
+                            >
+                              <i class="bi bi-calendar2-x"></i>
+                              &nbsp; Confirm Cancel
+                            </button>
+                            <button
+                              id="closeCancelButton"
+                              class="btn btn-secondary col-6 pt-1 w-50 rounded-0"
+                              onclick="closeCancel(event, '<%= reservations[i].resId %>')"
+                            >
+                              <i class="bi bi-x-square"></i>
+                              &nbsp; Close
+                            </button>
+                          </div>
+                        </div>
+                        <div
+                          class="mt-2"
+                          id="updateModal<%= reservations[i].resId %>"
+                          style="display: none"
+                        >
+                          <h5 class="text-primary mt-1 mb-2">
+                            Update Reservation
+                          </h5>
+                          <label
+                            class="text-secondary fw-bold mb-1"
+                            for="newCheckIn<%= reservations[i].resId %>"
+                            >New Check-in Date:</label
+                          >
+                          <input
+                            class="w-50 mb-2 text-center"
+                            type="text"
+                            id="newCheckIn<%= reservations[i].resId %>"
+                          />
+                          <label
+                            class="text-secondary fw-bold mb-1"
+                            for="newCheckOut<%= reservations[i].resId %>"
+                            >New Check-out Date:</label
+                          >
+                          <input
+                            class="w-50 text-center mb-3"
+                            type="text"
+                            id="newCheckOut<%= reservations[i].resId %>"
+                          />
+                          <div
+                            class="list-group-item text-center d-flex justify-content-between p-0"
+                          >
+                            <button
+                              id="submitUpdateButton"
+                              class="btn btn-primary col-6 pt-1 w-50 rounded-0"
+                              onclick="submitUpdate(event, <%= JSON.stringify(reservations[i]) %>)"
+                            >
+                              <i class="bi bi-calendar-check"></i>
+                              &nbsp; Update
+                            </button>
+                            <button
+                              id="closeModalButton"
+                              class="btn btn-secondary col-6 pt-1 w-50 rounded-0"
+                              onclick="closeModal(event, '<%= reservations[i].resId %>')"
+                            >
+                              <i class="bi bi-x-square"></i>
+                              &nbsp; Close
+                            </button>
+                          </div>
+                        </div>
+                        <input
+                          type="hidden"
+                          name="action"
+                          id="action<%= reservations[i].resId %>"
+                          value=""
+                        />
+                        <input
+                          type="hidden"
+                          name="selectedSiteId"
+                          id="selectedSiteId<%= reservations[i].resId %>"
+                          value=""
+                        />
+                        <input
+                          type="hidden"
+                          name="selectedUserId"
+                          id="selectedUserId"
+                          value=""
+                        />
+                        <input
+                          type="hidden"
+                          name="selectedResId"
+                          id="selectedResId<%= reservations[i].resId %>"
+                          value=""
+                        />
+                        <input
+                          type="hidden"
+                          name="updatedCheckIn"
+                          id="updatedCheckIn<%= reservations[i].resId %>"
+                          value=""
+                        />
+                        <input
+                          type="hidden"
+                          name="updatedCheckOut"
+                          id="updatedCheckOut<%= reservations[i].resId %>"
+                          value=""
+                        />
+                        <input
+                          type="hidden"
+                          name="sessionUserTypeId"
+                          id="sessionUserTypeId"
+                          value="<%= session.userTypeId %>"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br />
+            </form>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <br />
+      <hr class="featurette-divider text-light" />
+
+      <div class="container-sm mt-3">
+        <footer>
+          <div class="row text-light text-center">
+            <div class="col-8 text-center mx-auto">
+              <h2 class="text-secondary">About Us</h2>
+              <p>
+                Our campsite is run by a team of passionate individuals who have
+                a deep love and respect for the outdoors. We understand the
+                importance of family time and creating lasting memories, which
+                is why we have created a safe and enjoyable environment for
+                families to relax and reconnect.
+              </p>
+            </div>
+          </div>
+          <div class="row text-light">
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Hours</h3>
+              <div class="w-80 p-4">
+                <h5><b>Office Hours Mon – Fri</b></h5>
+                <p>0800 – 1600</p>
+                <h5><b>Office Hours Sat – Sun</b></h5>
+                <p>Closed</p>
+                <h5><b>Check In</b></h5>
+                <p>After 1300</p>
+                <h5><b>Check Out</b></h5>
+                <p>Before 1200</p>
+                <h5><b>Quiet Hours</b></h5>
+                <p>
+                  2200 – 0800 -
+                  <i>Generators are not permitted during quiet hours.</i>
+                </p>
+              </div>
+            </div>
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Contact Us</h3>
+              <div class="w-80 p-4">
+                <h5><b>Phone</b></h5>
+                <p>(801) 775-3250</p>
+                <h5><b>Address</b></h5>
+                <p>5622 Park Lane, Bldg. 564 Hill AFB, UT 84056</p>
+              </div>
+            </div>
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Mailing Information</h3>
+              <div class="w-80 p-4">
+                <h5><b>USPS</b></h5>
+                <p>
+                  Your Name and Site # <br />
+                  FamCamp<br />
+                  7338 Loncki St.<br />
+                  Hill AFB, UT 84056
+                </p>
+                <p>
+                  Regular Mail can be picked up at the Base Post Office Bldg.
+                  344
+                </p>
+                <h5><b>UPS and FedEx</b></h5>
+                <p>
+                  Your Name<br />
+                  FamCamp Bldg 564 Site #<br />
+                  5622 Park Lane<br />
+                  Hill AFB, UT 84056
+                </p>
+                <p>Parcels are delivered to the office.</p>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <div id="famCampMap" style="display: none" onclick="showMap()">
+      <img class="map w-100" src="/images/famcamp-map.png" alt="FamCamp Map" />
+    </div>
+    <% if (typeof message !== "undefined") { %>
+    <script>
+      const message = "<%= message %>";
+    </script>
+    <% } %>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".dropdown-toggle").dropdown();
+      });
+      function showMap() {
+        const mapContainer = document.getElementById("famCampMap");
+        const body = document.getElementById("reservationsContent");
+        mapContainer.style.display =
+          mapContainer.style.display === "none" ? "block" : "none";
+        body.style.display = body.style.display === "block" ? "none" : "block";
+      }
+    </script>
+    <script>
+      function getCancelMessages(event, reservation, resId) {
+        var res = reservation;
+        let cancelMessage = "";
+        // Prevent the form from submitting until we verify if the user wants to cancel the reservation
+        event.preventDefault();
+        // Get the user and reservation IDs
+        var selectedResId = res.resId;
+        console.log("Selected Reservation ID in cancel message: " + selectedResId);
+        var selectedUserId = res.userId;
+        var checkIn = res.checkIn;
+        // Get the form element
+        var formElement = document.getElementById(
+          `reservationForm${res.resId}`
+        );
+        // Set the value of hidden input fields
+        document.getElementById("selectedUserId").value = selectedUserId;
+        document.getElementById(`selectedResId${selectedResId}`).value = selectedResId;
+        console.log(
+          "Selected Reservation ID: " +
+            document.getElementById(`selectedResId${selectedResId}`).value
+        );
+        console.log(
+          "Selected User ID: " + document.getElementById("selectedUserId").value
+        );
+          // Get cancel messages depending on the number of days between the current date and the check-in date
+          var diffDays = getDaysDifference(new Date(), new Date(checkIn));
+          if (diffDays >= 3) {
+            cancelMessage =
+              "Are you sure you want to cancel your reservation? There will be a $10 cancellation fee.";
+            showCancelMessage(res, resId, cancelMessage);
+          } else if (diffDays > 0) {
+            cancelMessage =
+              "Are you sure you want to cancel your reservation? You will be charged a full day's fee at the current site rate.";
+            showCancelMessage(res, resId, cancelMessage);
+          } else if (diffDays <= 0) {
+            cancelMessage =
+              "Are you sure you want to cancel your reservation? You will not be refunded.";
+            showCancelMessage(res, resId, cancelMessage);
+          }
+      }
+
+      function cancelRes(event, reservation) {
+        event.preventDefault();
+        var res = reservation;
+        var selectedResId = res.resId;
+        document.getElementById(`selectedResId${selectedResId}`).value = selectedResId;
+        console.log("Selected Reservation ID passed into cancelRes function: " + selectedResId);
+        console.log("Hidden Reservation ID passed into hidden field: " + document.getElementById(`selectedResId${selectedResId}`).value);
+        // Set the value of the hidden input field for access on the server side
+        document.getElementById(`action${selectedResId}`).value = 'cancel';
+        var formElement = document.getElementById(`reservationForm${selectedResId}`);
+        formElement.submit();
+      }
+
+      function updateRes(event, reservation, resId) {
+        event.preventDefault();
+        // Create a new Date object for the current date
+        var now = new Date();
+    
+        // Create a new Date object for six months in the future
+        var sixMonthsFromNow = new Date(
+          now.getFullYear(),
+          now.getMonth() + 6,
+          now.getDate()
+        );
+
+        let res = reservation;
+
+        // Initialize Flatpickr date pickers
+        flatpickr("#newCheckIn" + resId, {
+          defaultDate: res.checkIn,
+          minDate: "today",
+          maxDate: sixMonthsFromNow,
+        });
+        flatpickr("#newCheckOut" + resId, {
+          defaultDate: res.checkOut,
+          minDate: "today",
+          maxDate: sixMonthsFromNow,
+        });
+
+        // Show the modal (hide the initial buttons)
+        showModal(event, resId);
+      }
+
+      function showErrorMessage(reservation, resId, message) {
+        event.preventDefault();
+        let res = reservation;
+        // Get the update message section and update message
+        let updateSection = document.getElementById(
+          "updateErrorSection" + resId
+        );
+        let error = document.getElementById("updateErrorMessage" + resId);
+        // Set the error message content
+        error.innerHTML = message;
+        // Show the update message section
+        updateSection.style.display = "block";
+        // Hide the update modal
+        document.getElementById("updateModal" + resId).style.display = "none";
+      }
+
+      function submitUpdate(event, reservation) {
+        event.preventDefault();
+        let userTypeId = parseInt(
+          document.getElementById("sessionUserTypeId").value
+        );
+        console.log("reservations.ejs: User Type ID: " + userTypeId);
+        event.preventDefault();
+        // Get the new check-in, check-out dates, and form element
+        let res = reservation;
+        let site = res.site;
+        let resId = res.resId;
+        var newIn = document.getElementById("newCheckIn" + resId).value;
+        var newOut = document.getElementById("newCheckOut" + resId).value;
+        var checkIn = res.checkIn;
+        var checkOut = res.checkOut;
+        var formElement = document.getElementById(`reservationForm${resId}`);
+
+        // Set the value of hidden input fields for resId, new check-in, new check-out, and selected site
+        document.getElementById(`selectedResId${resId}`).value = resId;
+        document.getElementById(`updatedCheckIn${resId}`).value = newIn;
+        document.getElementById(`updatedCheckOut${resId}`).value = newOut;
+        document.getElementById(`selectedSiteId${resId}`).value = site;
+
+        // Get the difference in days between the new check-in and check-out dates
+        var daysDiff = getDaysDifference(new Date(newIn), new Date(newOut));
+
+        // If daysDiff is > 14 and the dates are between 1 apr to 15th oct, then alert
+        const currentYear = new Date().getFullYear();
+        const april1st = new Date(currentYear, 3, 1); // Months are 0-indexed, so 3 is April
+        const october15th = new Date(currentYear, 9, 15); // Months are 0-indexed, so 9 is October
+
+        if (
+          daysDiff > 14 &&
+          new Date(newIn) >= april1st &&
+          new Date(newIn) <= october15th
+        ) {
+          // Check session user type for admin
+          if (userTypeId === 1) {
+            // User is admin and can override the 14 day rule, submit the form
+            formElement.submit();
+          } else {
+            errorMessage =
+              "You cannot reserve a site for more than 14 days between April 1st and October 15th.";
+            showErrorMessage(res, resId, errorMessage);
+          }
+        } else if (newIn === checkIn && newOut === checkOut) {
+          errorMessage =
+            "Check-in and check-out dates are the same as the original reservation. Please try again.";
+          showErrorMessage(res, resId, errorMessage);
+        } else {
+          // If available, submit the form
+          formElement.submit();
+        }
+      }
+
+      function getDaysDifference(date1, date2) {
+        // Get dates as date objects
+        date1.setDate(date1.getDate());
+        date2.setDate(date2.getDate());
+        // Calculate number of days between the two dates
+        var diff = Math.ceil((date2 - date1) / (1000 * 3600 * 24));
+        return diff;
+      }
+
+      function closeModal(event, resId) {
+        event.preventDefault();
+        document.getElementById("updateModal" + resId).style.display = "none";
+        document
+          .getElementById(`initialButtons${resId}`)
+          .classList.remove("hidden");
+      }
+
+      function showModal(event, resId) {
+        event.preventDefault();
+        document.getElementById("updateModal" + resId).style.display = "block";
+        document
+          .getElementById(`initialButtons${resId}`)
+          .classList.add("hidden");
+      }
+
+      // Closes the update error message
+      function closeUpdateError(event, resId) {
+        // Prevent default behavior
+        event.preventDefault();
+        document.getElementById("updateErrorSection" + resId).style.display =
+          "none";
+        document
+          .getElementById(`initialButtons${resId}`)
+          .classList.remove("hidden");
+      }
+
+      function closeCancel(event, resId) {
+        // Prevent default behavior
+        event.preventDefault();
+        document.getElementById("resChangeNoticeSection" + resId).style.display =
+          "none";
+        document
+          .getElementById(`initialButtons${resId}`)
+          .classList.remove("hidden");
+      }
+
+      // Shows the cancel message when a user wants to cancel their reservation
+      function showCancelMessage(reservation, resId, message) {
+        // Hide the modal
+        document.getElementById("updateModal" + resId).style.display = "none";
+        // Display the cancel message
+        let cancelSection = document.getElementById(
+          "resChangeNoticeSection" + resId
+        );
+        let cancelMessage = document.getElementById("resChangeNoticeMessage" + resId);
+        console.log("Message in reservations ejs page: " + message);
+        cancelMessage.innerHTML = message;
+        cancelSection.style.display = "block";
+        document
+          .getElementById(`initialButtons${resId}`)
+          .classList.add("hidden");
+      }
+
+      // Sets the hidden var "action" to cancel or update based on the button clicked
+      function setAction(resId, action) {
+        // Validate the action parameter
+        if (action !== "cancel" && action !== "update") {
+          console.error("Invalid action parameter:", action);
+          // Provide a default value if the input is invalid
+          action = "none";
+        }
+        // Set the value of the hidden input field "action"
+        document.getElementById(`action${resId}`).value = action;
+        console.log("Action: " + action);
+      }
+
+      // Show invoice when Checkout is submitted
+      function showInvoice() {
+        const invoice = document.getElementById("invoice");
+        const checkout = document.getElementById("reservationsContent");
+        invoice.style.display =
+          invoice.style.display === "none" ? "block" : "none";
+        checkout.style.display =
+          checkout.style.display === "flex" ? "none" : "flex";
+      }
+    </script>
+  </body>
+</html>

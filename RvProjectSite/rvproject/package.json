@@ -1,0 +1,30 @@
+{
+  "name": "rvproject",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "@chenfengyuan/datepicker": "^1.0.10",
+    "@popperjs/core": "^2.11.7",
+    "bootstrap": "^5.2.3",
+    "bootstrap-datepicker": "^1.9.0",
+    "bootstrap-icons": "^1.10.4",
+    "bootstrap-timepicker": "^0.5.2",
+    "cookie-parser": "~1.4.4",
+    "crypto-js": "^4.1.1",
+    "debug": "~2.6.9",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-mysql-session": "^3.0.0",
+    "express-session": "^1.17.3",
+    "http-errors": "~1.6.3",
+    "icons": "^1.0.0",
+    "jquery": "^3.6.4",
+    "jquery-ui": "^1.13.2",
+    "morgan": "~1.9.1",
+    "mysql2": "^3.2.0",
+    "mysql3": "^0.6.0"
+  }
+}

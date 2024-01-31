@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Famcamp Login</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="font/bootstrap-icons.css" />
+    <script type="text/javascript" src="crypto-js.js"></script>
+  </head>
+  <body class="bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a
+        href="/"
+        class="text-secondary ps-2"
+        style="text-decoration: none; padding-top: 0.2rem"
+        ><img
+          src="images/airforce.png"
+          class="nav-link text-secondary text-decoration-none tracking-wide"
+          style="border-radius: 25px; display: inline-block"
+          width="45"
+          height="45"
+          alt=""
+        />&nbsp;&nbsp;HILL AFB FAMCAMP</a
+      >
+      <a class="navbar-brand" href="#"></a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#rvNavbar"
+        aria-controls="rvNavbar"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="rvNavbar">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/sites">&emsp;SITES</a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              onclick="event.preventDefault(); showMap();"
+              style="cursor: pointer"
+              id="rMapLink"
+              >&emsp;MAP</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="navbar-nav ml-autod-md-block">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            style="margin-left: 1rem; padding-right: 1rem"
+            href="/register"
+            >REGISTER</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            style="margin-left: 1rem; padding-right: 1rem"
+            href="/login"
+            >LOGIN</a
+          >
+        </li>
+      </div>
+    </nav>
+    <div id="loginContent" style="display: block">
+      <div
+        class="container text-center mt-4 p-3"
+        style="background-color: #01337e"
+      >
+        <h2 class="text-light" style="letter-spacing: 4px; color: lightgray">
+          HILL AFB FAMCAMP
+        </h2>
+      </div>
+      <div class="container bg-light text-center">
+        <div class="row" style="display: flex; flex-wrap: wrap">
+          <div class="col-6 d-none d-lg-block text-center bg-danger h-100">
+            <img
+              src="images/rvpark-people2.jpg"
+              width="104%"
+              height="135%"
+              alt="RV Park"
+              style="margin-left: -0.75rem"
+            />
+          </div>
+          <div class="col-sm-12 col-lg-6 text-center p-0 m-0">
+            <div class="row d-flex justify-content-between p-0 m-0">
+              <div class="btn-group w-100 p-0 m-0" role="group">
+                <button
+                  id="loginButton"
+                  class="btn btn-primary btn-lg flex-fill ps-0 pe-0 ms-0 me-0"
+                  style="
+                    border-radius: 0;
+                    border-right: 1px solid black;
+                    margin-right: 1px;
+                  "
+                  onclick="window.location.replace('/login')"
+                >
+                  Sign In
+                </button>
+                <button
+                  id="registerButton"
+                  class="btn btn-primary btn-lg flex-fill ps-0 pe-0 ms-0 me-0"
+                  style="border-radius: 0"
+                  onclick="window.location.replace('/register')"
+                >
+                  Register
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <form id="loginPage" onSubmit="login(event);" method="post">
+                <div class="p-4">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text bg-primary">
+                      <i class="bi bi-envelope-at-fill text-white"></i>
+                    </span>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      class="form-control"
+                      autofocus="autofocus"
+                      onblur="handleEmailBlur(event)"
+                      placeholder="Email"
+                    />
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-text bg-primary">
+                      <i class="bi bi-key-fill text-white"></i>
+                    </span>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      class="form-control"
+                      autofocus="false"
+                      placeholder="Password"
+                    />
+                  </div>
+                  <input
+                    type="hidden"
+                    id="salt"
+                    name="salt"
+                    value="<%- locals.salt %>"
+                  />
+                  <input
+                    type="hidden"
+                    id="hashedPassword"
+                    name="hashedPassword"
+                    value=""
+                  />
+                  <div>
+                    <p id="message" class="text-danger" style="height: 20px">
+                      <%- locals.message %>
+                    </p>
+                  </div>
+                  <div class="text-center">
+                    <button class="btn btn-primary" type="submit">
+                      Sign In
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="row p-0 m-0 w-100"
+                  style="
+                    display: flex;
+                    flex-wrap: wrap;
+                    background-color: #01337e;
+                  "
+                >
+                  <div class="col-12 d-lg-block text-center h-100 p-0 m-0">
+                    <img
+                      src="images/airforce.png"
+                      width="56.9%"
+                      height="56.9%"
+                      alt="Air Force Logo"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <hr class="featurette-divider text-light" />
+      <br />
+      <div class="container-sm mt-3">
+        <footer>
+          <div class="row text-light text-center">
+            <div class="col-8 text-center mx-auto">
+              <h2 class="text-secondary">About Us</h2>
+              <p>
+                Our campsite is run by a team of passionate individuals who have
+                a deep love and respect for the outdoors. We understand the
+                importance of family time and creating lasting memories, which
+                is why we have created a safe and enjoyable environment for
+                families to relax and reconnect.
+              </p>
+            </div>
+          </div>
+          <div class="row text-light">
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Hours</h3>
+              <div class="w-80 p-4">
+                <h5><b>Office Hours Mon – Fri</b></h5>
+                <p>0800 – 1600</p>
+                <h5><b>Office Hours Sat – Sun</b></h5>
+                <p>Closed</p>
+                <h5><b>Check In</b></h5>
+                <p>After 1300</p>
+                <h5><b>Check Out</b></h5>
+                <p>Before 1200</p>
+                <h5><b>Quiet Hours</b></h5>
+                <p>
+                  2200 – 0800 -
+                  <i>Generators are not permitted during quiet hours.</i>
+                </p>
+              </div>
+            </div>
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Contact Us</h3>
+              <div class="w-80 p-4">
+                <h5><b>Phone</b></h5>
+                <p>(801) 775-3250</p>
+                <h5><b>Address</b></h5>
+                <p>5622 Park Lane, Bldg. 564 Hill AFB, UT 84056</p>
+              </div>
+            </div>
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Mailing Information</h3>
+              <div class="w-80 p-4">
+                <h5><b>USPS</b></h5>
+                <p>
+                  Your Name and Site # <br />
+                  FamCamp<br />
+                  7338 Loncki St.<br />
+                  Hill AFB, UT 84056
+                </p>
+                <p>
+                  Regular Mail can be picked up at the Base Post Office Bldg.
+                  344
+                </p>
+                <h5><b>UPS and FedEx</b></h5>
+                <p>
+                  Your Name<br />
+                  FamCamp Bldg 564 Site #<br />
+                  5622 Park Lane<br />
+                  Hill AFB, UT 84056
+                </p>
+                <p>Parcels are delivered to the office.</p>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <div id="registerMap" style="display: none" onclick="showMap()">
+      <img
+        width="100%"
+        class="map"
+        src="/images/famcamp-map.png"
+        alt="FamCamp Map"
+      />
+    </div>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="crypto-js.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".dropdown-toggle").dropdown();
+      });
+    </script>
+    <script>
+      let emailBlurred = false;
+      let registerClicked = false;
+      let formSubmitted = false;
+
+      function handleEmailBlur(event) {
+        console.log(event);
+        if (event.relatedTarget && event.relatedTarget.tagName === "BUTTON") {
+          // Get the id of the button that was clicked
+          const buttonId = event.relatedTarget.id;
+          console.log(buttonId);
+          if (buttonId == "registerButton") {
+            // Navigate to the registration page
+            window.location.replace("/register");
+          } else if (buttonId == "loginButton") {
+            window.location.replace("/login");
+          }
+        } else {
+          // Clear error message when they try to enter user email again
+          document.getElementById("message").innerHTML = "";
+          emailBlurred = true;
+          getSalt(event);
+        }
+      }
+
+      async function getSalt(event) {
+        const email = document.getElementById("email").value;
+        if (email === "") {
+          document.getElementById("message").innerHTML =
+            "Please enter an email";
+          return;
+        }
+        try {
+          const response = await fetch("/getsalt", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: email }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const salt = data.salt;
+            document.getElementById("salt").value = salt;
+          } else {
+            document.getElementById("message").innerHTML =
+              "Invalid User email, please try again";
+          }
+        } catch (error) {
+          document.getElementById("message").innerHTML = "Network error";
+        }
+      }
+
+      function login(event) {
+        // Prevent form submission until the password hash is generated
+        event.preventDefault();
+        formSubmitted = true;
+
+        let email = document.getElementById("email").value;
+        if (email == "") {
+          document.getElementById("message").innerHTML =
+            "Please enter an email";
+          event.preventDefault();
+        }
+        let password = document.getElementById("password").value;
+        let salt = document.getElementById("salt").value;
+        if (password == "") {
+          document.getElementById("message").innerHTML =
+            "Please enter a password";
+          event.preventDefault();
+        } else {
+          // Put the hashed password in the DOM so it can be posted
+          var hashedPassword = CryptoJS.SHA256(password + ":" + salt).toString(
+            CryptoJS.enc.Hex
+          );
+          document.getElementById("hashedPassword").value = hashedPassword;
+
+          // Now submit the form
+          document.getElementById("loginPage").submit();
+        }
+      }
+
+      function showMap() {
+        const mapContainer = document.getElementById("registerMap");
+        const body = document.getElementById("loginContent");
+        mapContainer.style.display =
+          mapContainer.style.display === "none" ? "block" : "none";
+        body.style.display = body.style.display === "block" ? "none" : "block";
+      }
+    </script>
+  </body>
+</html>

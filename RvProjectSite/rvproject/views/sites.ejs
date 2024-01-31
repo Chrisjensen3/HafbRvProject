@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FamCamp Sites</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="node_modules/jquery-ui/themes/base/all.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    
+  </head>
+
+  <body class="bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a
+        href="/"
+        class="text-secondary ps-2"
+        style="text-decoration: none; padding-top: 0.2rem"
+        ><img
+          src="images/airforce.png"
+          class="nav-link text-secondary text-decoration-none tracking-wide"
+          style="border-radius: 25px; display: inline-block"
+          width="45"
+          height="45"
+          alt=""
+        />&nbsp;&nbsp;HILL AFB FAMCAMP</a
+      >
+      <a class="navbar-brand" href="#"></a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#rvNavbar"
+        aria-controls="rvNavbar"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="rvNavbar">
+        <ul class="navbar-nav mr-auto">
+          <% if(session.userTypeId == 1 || session.userTypeId == 2) { %>
+          <li class="nav-item active">
+            <a class="nav-link" href="/admin">&emsp;REPORTS</a>
+          </li>
+          <% } %>
+          <li class="nav-item active">
+            <a class="nav-link" href="/reservations">&emsp;RESERVATIONS</a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              onclick="event.preventDefault(); showMap();"
+              style="cursor: pointer"
+              id="mapLink"
+              >&emsp;MAP</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="navbar-nav ml-autod-md-block">
+        <li class="nav-item" style="margin: 0.4rem 0 0 0; padding-right: 1rem; font-size: 110%">
+          <i>Welcome &nbsp;<b style="font-weight: 550; color:#01337e"><%= session.firstName %> <%= session.lastName %>: <%= session.email %>&nbsp;&nbsp;</b></i>
+        </li>
+        <% if (session && session.cookie) { %>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            style="margin-left: 1rem; padding-right: 1rem"
+            href="/logout"
+            >LOGOUT</a
+          >
+        </li>
+        <% } %>
+      </div>
+    </nav>
+    <div id="sitesContent" style="display: block">
+      <div
+        class="container-fluid text-center pt-3 m-0"
+        style="background-color: #01337e"
+      >
+        <div class="row d-flex justify-content-between w-100">
+          <h2 class="ms-2" style="letter-spacing: 4px; color: lightgray">
+            HILL AFB FAMCAMP
+          </h2>
+          <p class="col-md-12 fs-4 text-light p-0">Sites</p>
+        </div>
+      </div>
+      <!-- <hr class="featurette-divider text-light" /> -->
+
+      <!-- Main Site Container displays on regular desktop screen sizes > 768px -->
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-4 mt-4">
+            <form
+              id="siteFilter"
+              onSubmit=""
+              method="post"
+              class="bg-light mb-2 rounded"
+            >
+              <div
+                class="card text-white"
+                style="
+                  background-color: #01337e;
+                  text-align: center;
+                  padding-top: 1rem;
+                  border: 1px solid lightgray;
+                  border-bottom-left-radius: 0;
+                  border-bottom-right-radius: 0;
+                "
+              >
+                <h5 class="card-header pb-3" style="margin-top: -0.5rem">
+                  Find Available Sites
+                </h5>
+              </div>
+              <div class="p-4">
+                <div class="row mb-2">
+                  <label class="col-5" for="selectCheckin">Check-in:</label>
+                  <input type="text" id="selectCheckin" name="selectCheckin" class="datepicker col-6" data-input/>
+                </div>
+                <div class="row mb-3">
+                  <label class="col-5" for="selectCheckout">Check-out:</label>
+                  <input type="text" id="selectCheckout" name="selectCheckout" class="datepicker col-6" data-input/>
+                </div>
+                <input
+                  type="hidden"
+                  name="checkin"
+                  id="checkin"
+                  value=""
+                />
+
+                <input
+                  type="hidden"
+                  name="checkout"
+                  id="checkout"
+                  value=""
+                />
+                <h5>Site Type:</h5>
+                <div class="input-group mb-3">
+                  <div class="form-check form-check-inline">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="siteClassOptions"
+                      id="allSites"
+                      value="1"
+                      checked
+                    />
+                    <label class="form-check-label" for="allSites"
+                      >Hookup Sites</label
+                    >
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="siteClassOptions"
+                      id="tentSite"
+                      value="5"
+                    />
+                    <label class="form-check-label" for="tentSite"
+                      >Tent Site</label
+                    >
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="siteClassOptions"
+                      id="drySite"
+                      value="3"
+                    />
+                    <label class="form-check-label" for="drySite"
+                      >Dry Site</label
+                    >
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="siteClassOptions"
+                      id="rental"
+                      value="4"
+                    />
+                    <label class="form-check-label" for="rental"
+                      >Trailer Rental</label
+                    >
+                  </div>
+                  <% if(session.userTypeId == 1 || session.userTypeId == 2) { %>
+                  <div class="form-check form-check-inline">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="siteClassOptions"
+                      id="host"
+                      value="6"
+                    />
+                    <label class="form-check-label" for="host"
+                      >Host Site</label
+                    >
+                  </div>
+                  <% } %>
+                </div>
+
+                <div class="input-group mb-3">
+                  <input type="number" id="rvLength" name="rvLength" class="form-control" placeholder="Enter RV length in feet" value="">
+                </div>
+
+                <div class="text-center">
+                  <button
+                    class="btn btn-primary"
+                    style="display: inline-block; width: 7rem"
+                    onclick="event.preventDefault(); showResults();"
+                  >
+                    Search
+                  </button>
+                </div>
+              </div>
+            </form>
+            <input
+              type="hidden"
+              name="numDays"
+              id="numDays"
+              value=""
+            />
+            <% if (session.itemsInCart && session.itemsInCart.length > 0) { %>
+              <% console.log("There are items in the cart: " + JSON.stringify(session.itemsInCart)) %>
+              <!-- get cart details to display in cart -->
+              <div id="cartWithItems" class="card mt-4">
+                <div
+                  class="card-header text-white"
+                  style="background-color: #01337e; text-align: center"
+                >
+                  <% if (session.otherUser && Object.keys(session.otherUser).length !== 0) { %>
+                  <h5 class="card-header"><%= session.otherUser.firstName %> <%= session.otherUser.lastName %>'s Cart</h5>
+                  <% } else if (session.reservation && Object.keys(session.reservation).length !== 0) { %>
+                  <h5 class="card-header"><%= session.reservation.firstName %> <%= session.reservation.lastName %>'s Cart</h5>
+                  <% } else if (session.newReservation && Object.keys(session.newReservation).length !== 0) { %>
+                  <h5 class="card-header"><%= session.newReservation.firstName %> <%= session.newReservation.lastName %>'s Cart</h5>
+                  <% } else { %>
+                  <h5 class="card-header"><%= session.firstName %> <%= session.lastName %>'s Cart</h5>
+                  <% } %>
+                </div>
+                <% for (let i = 0; i < session.itemsInCart.length; i++) { %>
+                  <ul class="list-group list-group-flush">
+                      <li class="list-group-item">
+                        <h6><b>Site:</b> <%- session.itemsInCart[i].siteName %></h6> 
+                        <h6><b>Site Type:</b> <%- session.itemsInCart[i].siteType %></h6>
+                        <h6><b>Site Rate:</b> $<%- session.itemsInCart[i].siteRate %></h6>
+                        <h6><b>Dates:</b> <%- session.itemsInCart[i].checkIn %> - <%- session.itemsInCart[i].checkOut %></h6>
+                        <h6><b>Days:</b> <%- session.itemsInCart[i].numDays %> days</h6>
+                        <h6><b>Subtotal:</b> $<%- parseFloat(session.itemsInCart[i].subtotal).toFixed(2) %></h6>
+                      </li>
+                  </ul>
+                <% } %>
+                <div class="card-body text-center">
+                  <% if (session.cartTotal) { %>
+                    <h4>Total: $<%- session.cartTotal.toFixed(2) %> </h4>
+                  <% } %>
+                </div>
+                <% if(parseInt(session.itemsInCart[0].siteType) == 6) { %>
+                  <% console.log("This is a host site"); %>
+                  <div class="col-sm text-center mb-2">
+                  <a
+                    href="/admin"
+                    class="btn btn-primary w-50 pb-2"
+                    style="font-size: 120%"
+                    >Reserve Host Site</a
+                  >
+                </div>
+                <% } else { %>
+                
+                <div id="checkoutDiv" class="col-sm text-center mb-2">
+                  <a
+                    href="/checkout"
+                    class="btn btn-primary w-50 pb-2"
+                    style="font-size: 110%"
+                    >Checkout</a
+                  >
+                </div>
+                <% } %>
+              </div>
+            <% } else { %>
+              <div id="cartWithoutItems" class="card mt-4">
+                <div
+                  class="card-header text-white"
+                  style="background-color: #01337e; text-align: center"
+                >
+                  <% if (session.otherUser && Object.keys(session.otherUser).length !== 0) { %>
+                  <h5 class="card-header"><%= session.otherUser.firstName %> <%= session.otherUser.lastName %>'s Cart</h5>
+                  <% } else if (session.reservation && Object.keys(session.reservation).length !== 0) { %>
+                  <h5 class="card-header"><%= session.reservation.firstName %> <%= session.reservation.lastName %>'s Cart</h5>
+                  <% } else if (session.newReservation && Object.keys(session.newReservation).length !== 0) { %>
+                  <h5 class="card-header"><%= session.newReservation.firstName %> <%= session.newReservation.lastName %>'s Cart</h5>
+                  <% } else { %>
+                  <h5 class="card-header"><%= session.firstName %> <%= session.lastName %>'s Cart</h5>
+                  <% } %>
+                </div>
+                <div class="card-body text-center">
+                  <h5 class="card-title">Your cart is empty</h5>
+                </div>
+              </div>
+            <% } %>
+          </div>
+          <!-- Display general site type information on initial page load -->
+          <% if (!searchClicked) { %>
+          <div id="siteTypeInfo" class="col-lg-8 mt-4">
+            <% for (var i = 0; i < siteTypes.length; i++) { %>
+            <!-- TODO: Functionality needs to be implemented in this first card -->
+            <!-- Can use for to dynamically create cards -->
+            <div class="card">
+              <div
+                class="card-header text-white"
+                style="background-color: #01337e; text-align: center"
+              >
+                <% if (siteTypes[i].siteType.includes("Premium")) { %>
+                <h5 class="card-header">
+                  <%= siteTypes[i].siteType %>
+                  <h6 style="color: lightgray">(Limited Availability)</h6>
+                </h5>
+                <% } else { %>
+                <h5 class="card-header"><%= siteTypes[i].siteType %></h5>
+                <% } %>
+              </div>
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-6 mt-2 mb-2">
+                    <img
+                      src="<%= siteTypes[i].siteImage %>"
+                      class="img-fluid rounded"
+                      width="100%"
+                      alt=""
+                    />
+                  </div>
+                  <div class="col-md-6 mt-2 mb-2">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h5 class="card-title">Site Rate</h5>
+                        <p class="card-text">
+                          $<%= siteTypes[i].siteRate %> per Night
+                        </p>
+                      </div>
+                      <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                          <%= siteTypes[i].siteDescription %>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <% } %>
+          </div>
+          <% } %> 
+
+
+          <% if (searchClicked) { %>
+          <div id="siteSearchInfo" class="col-lg-8 mt-4">
+            <% if (availableSites.length == 0) { %>
+              <div class="card mb-4 w-75" style="border-radius: 2px">
+                <div
+                    class="card-header text-white"
+                    style="background-color: #01337e; text-align: center; border-radius: 2px"
+                  >
+                    <h5 class="card-header">No Available Sites with this Search Criteria</h5>
+                    <h7 class="pb-2" style="color: lightgray">Please try your Search again</h7>
+                  </div>
+              </div>
+            <% } else { %>
+            <% for (var i = 0; i < availableSites.length; i++) { %>
+              <div class="card mb-4">
+                <form
+                  id="addToCartForm<%= availableSites[i].siteId %>"
+                  onSubmit="addToCart(event, <%= JSON.stringify(availableSites[i]) %>, '<%=locals.numDays%>', '<%= locals.checkin %>', '<%= locals.checkout %>', '<%= locals.siteTypeId %>', '<%= locals.rvLength %>')"
+                  method="post"
+                  class="bg-light mb-2 rounded"
+                >
+                  <div
+                    class="card-header text-white"
+                    style="background-color: #01337e; text-align: center"
+                  >
+                    <h5 class="card-header">Site # <%= availableSites[i].siteName %> - <%= availableSites[i].siteType %></h5>
+                    <h7 class="pb-2" style="color: lightgray">Available Dates: &nbsp;&nbsp;<%= locals.checkin %> - <%= locals.checkout %> </h7>
+                  </div>
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-md-8 mt-2 mb-2">
+                        <img
+                          src="<%= availableSites[i].siteImage %>"
+                          class="img-fluid rounded"
+                          alt=""
+                        />
+                      </div>
+                      <div class="col-md mt-2">
+                        <div class="card">
+                          <div class="card-body text-center">
+                            <h5 class="card-title">Daily Rate</h5>
+                            <p class="card-text">$<%= availableSites[i].siteRate %></p>
+                          </div>
+                          <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-center">
+                              <h5 class="card-title">Total</h5>
+                              $<%= (parseFloat(availableSites[i].siteRate) * locals.numDays).toFixed(2) %>
+                            </li>
+                            <li class="list-group-item">
+                              <%= availableSites[i].siteDescription %>
+                            </li>
+                          </ul>
+                          <div class="card-body">
+                          <% if(locals.siteTypeId == 6) { %>
+                            <button id="reserveHostSiteButton<%=availableSites[i].siteId%>" class="card-link btn btn-primary w-100" type="submit">
+                              Add Host Site to Cart
+                            </button>
+                          <% } else { %>
+                             <button id="addToCartButton<%=availableSites[i].siteId%>" class="card-link btn btn-primary w-100" type="submit">
+                              <i class="bi bi-cart-plus">Add to Cart</i>
+                            </button>
+                          <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    type="hidden"
+                    name="checkin"
+                    id="checkin"
+                    value="<%= locals.checkin %>"
+                  />
+                  <input
+                    type="hidden"
+                    name="checkout"
+                    id="checkout"
+                    value="<%= locals.checkout %>"
+                  />
+
+                  <input
+                    type="hidden"
+                    name="rvLength"
+                    id="rvLength"
+                    value="<%= locals.rvLength %>"
+                  />
+
+                  <input
+                    type="hidden"
+                    name="siteClassOptions"
+                    id="siteClassOptions"
+                    value="<%= locals.siteTypeId %>"
+                  />
+
+                  <input
+                    type="hidden"
+                    name="addedToCart"
+                    id="addedToCart<%= i %>"
+                    value="false"
+                  />
+                   <input
+                    type="hidden"
+                    name="cartItems"
+                    id="cartItems<%= availableSites[i].siteId %>"
+                    value=""
+                  />
+                  <input
+                    type="hidden"
+                    name="cartObject"
+                    id="cartObject"
+                    value=""
+                  />
+                </form>
+                <!-- <hr class="featurette-divider text-light" />
+                <br> -->
+              </div>
+            <% } %>
+            <% } %>
+          </div>
+          <% } %>
+          
+          <!-- TODO: End of Cards that need to be removed (don't remove items below)-->
+          
+          <!-- Search and Reservation Areas - stick to top when scrolling down -->
+        </div>
+      </div>
+
+      <br />
+      <hr class="featurette-divider text-light" />
+
+      <div class="container-sm mt-3">
+        <footer>
+          <div class="row text-light text-center">
+            <div class="col-8 text-center mx-auto">
+              <h2 class="text-secondary">About Us</h2>
+              <p>
+                Our campsite is run by a team of passionate individuals who have
+                a deep love and respect for the outdoors. We understand the
+                importance of family time and creating lasting memories, which
+                is why we have created a safe and enjoyable environment for
+                families to relax and reconnect.
+              </p>
+            </div>
+          </div>
+          <div class="row text-light">
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Hours</h3>
+              <div class="w-80 p-4">
+                <h5><b>Office Hours Mon – Fri</b></h5>
+                <p>0800 – 1600</p>
+                <h5><b>Office Hours Sat – Sun</b></h5>
+                <p>Closed</p>
+                <h5><b>Check In</b></h5>
+                <p>After 1300</p>
+                <h5><b>Check Out</b></h5>
+                <p>Before 1200</p>
+                <h5><b>Quiet Hours</b></h5>
+                <p>
+                  2200 – 0800 -
+                  <i>Generators are not permitted during quiet hours.</i>
+                </p>
+              </div>
+            </div>
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Contact Us</h3>
+              <div class="w-80 p-4">
+                <h5><b>Phone</b></h5>
+                <p>(801) 775-3250</p>
+                <h5><b>Address</b></h5>
+                <p>5622 Park Lane, Bldg. 564 Hill AFB, UT 84056</p>
+              </div>
+            </div>
+            <div class="col-4">
+              <h3 class="text-center text-secondary">Mailing Information</h3>
+              <div class="w-80 p-4">
+                <h5><b>USPS</b></h5>
+                <p>
+                  Your Name and Site # <br />
+                  FamCamp<br />
+                  7338 Loncki St.<br />
+                  Hill AFB, UT 84056
+                </p>
+                <p>
+                  Regular Mail can be picked up at the Base Post Office Bldg.
+                  344
+                </p>
+                <h5><b>UPS and FedEx</b></h5>
+                <p>
+                  Your Name<br />
+                  FamCamp Bldg 564 Site #<br />
+                  5622 Park Lane<br />
+                  Hill AFB, UT 84056
+                </p>
+                <p>Parcels are delivered to the office.</p>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <div id="famCampMap" style="display: none" onclick="showMap()">
+      <img class="map w-100" src="/images/famcamp-map.png" alt="FamCamp Map" />
+    </div>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".dropdown-toggle").dropdown();
+      });
+      function showMap() {
+        const mapContainer = document.getElementById("famCampMap");
+        const body = document.getElementById("sitesContent");
+        mapContainer.style.display =
+          mapContainer.style.display === "none" ? "block" : "none";
+        body.style.display = body.style.display === "block" ? "none" : "block";
+      }
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Create a new Date object for the current date
+        var now = new Date();
+    
+        // Create a new Date object for six months in the future
+        var sixMonthsFromNow = new Date(
+          now.getFullYear(),
+          now.getMonth() + 6,
+          now.getDate()
+        );
+    
+        // Initialize Flatpickr date pickers
+        flatpickr("#selectCheckin", {
+          format: "m/d/Y",
+          minDate: "today",
+          maxDate: sixMonthsFromNow,
+        });
+        flatpickr("#selectCheckout", {
+          format: "m/d/Y",
+          minDate: "today",
+          maxDate: sixMonthsFromNow,
+        });
+      });
+    </script>
+    <script>
+      function showResults()
+      {
+        // Set the checkin and checkout dates
+        var checkin = document.getElementById("selectCheckin").value;
+        var checkout = document.getElementById("selectCheckout").value;
+        if (checkin == "" || checkout == "") {
+          alert("Please select a checkin and checkout date.");
+          //prevent form from submitting
+          event.preventDefault();
+          return;
+        }
+        // Set the hidden checkin and checkout dates
+        document.getElementById("checkin").value = checkin;
+        document.getElementById("checkout").value = checkout;
+        // Calculate the number of days between the dates and set the hidden input numDays
+        var date1 = new Date(checkin);
+        var date2 = new Date(checkout);
+        var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+        var numDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        document.getElementById("numDays").value = numDays;
+
+        // Log the dates and number of days
+        console.log("Checkin: " + checkin);
+        console.log("Checkout: " + checkout);
+        console.log("Number of days: " + numDays);
+        console.log("RV Length: " + document.getElementById("rvLength").value);
+        let userAdmin = false;
+        let sessionUserTypeId = parseInt("<%= session.userTypeId %>");
+        if(sessionUserTypeId == 1 || sessionUserTypeId == 2) {
+          userAdmin = true;
+        }
+        // Check if the number of days is greater than 14 and the dates are between April 1st and October 15th
+        const currentYear = new Date().getFullYear();
+        const april1st = new Date(currentYear, 3, 1); // Months are 0-indexed, so 3 is April
+        const october15th = new Date(currentYear, 9, 15); // Months are 0-indexed, so 9 is October
+
+        if (numDays > 14 && new Date(checkin) >= april1st && new Date(checkout) <= october15th && !userAdmin) {
+          alert(
+            "You cannot reserve a site for more than 14 days between April 1st and October 15th."
+          );
+          //prevent form from submitting
+          event.preventDefault();
+        } 
+        else if ((document.getElementById("allSites").checked || document.getElementById("drySite").checked) && document.getElementById("rvLength").value == "") {
+          alert("Please enter your RV length.");
+          //prevent form from submitting
+          event.preventDefault();
+        }
+        else {
+          // Get the form element 
+          var form = document.getElementById("siteFilter");
+          // Post the form
+          form.submit();
+        }
+      }
+
+      function addToCart(event, availableSites, numDays, checkin, checkout, siteTypeId, rvLength) {
+        console.log("Add to cart button clicked: addToCart function called.");
+        event.preventDefault();
+
+        var rate = parseFloat(availableSites.siteRate);
+        var days = parseInt(numDays);
+        var subtotal = rate * days;
+        var cartItems = [];
+
+        // Add cartItems
+        cartItems.push({
+          siteId: availableSites.siteId,
+          siteName: availableSites.siteName,
+          siteType: availableSites.siteType,
+          checkIn: checkin,
+          checkOut: checkout,
+          numDays: numDays,
+          siteRate: availableSites.siteRate,
+          siteTypeId: siteTypeId,
+          rvLength: rvLength,
+          subtotal: subtotal
+        });
+
+        // Set hidden div to the value of cartItems array to access on the server side
+        let items = document.getElementById("cartItems" + availableSites.siteId);
+        items.value = JSON.stringify(cartItems);
+        
+        console.log(cartItems);
+        console.log("Now printing the items.value: ");
+        console.log(items.value);
+
+        // Get the form element
+        var form = document.getElementById("addToCartForm" + availableSites.siteId);
+        // Post the form
+        form.submit();
+      }
+    </script>
+  </body>
+</html>
