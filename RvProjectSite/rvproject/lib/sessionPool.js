@@ -4,19 +4,19 @@ var mysql2 = require("mysql2/promise");
 // Get a plain MySQL connection and create a session table (the express-mysql-session module is bugged and doesn't do it)
 var dbCon = require("../lib/database");
 
-let sql = "CREATE DATABASE IF NOT EXISTS NodeExpressSessionStorage";
-console.log("sessionPool.js: sql message will be " + sql);
-dbCon.execute(sql, function (err, results, fields) {
-  if (err) {
-    console.log("sessionPool.js: Problem: Is the MySQL server running?");
-    console.log(err.message);
-    throw err;
-  } else {
-    console.log(
-      "sessionPool.js: Created session database if it didn't already exist"
-    );
-  }
-});
+//let sql = "CREATE DATABASE IF NOT EXISTS NodeExpressSessionStorage";
+//console.log("sessionPool.js: sql message will be " + sql);
+//dbCon.execute(sql, function (err, results, fields) {
+//  if (err) {
+//    console.log("sessionPool.js: Problem: Is the MySQL server running?");
+//    console.log(err.message);
+//    throw err;
+//  } else {
+//    console.log(
+//      "sessionPool.js: Created session database if it didn't already exist"
+//    );
+//  }
+//});
 
 // Now that the session database and table exists, create a MySQL pool so it can be hooked up to expression session storage
 var dbConnectionInfo = require('../connectionInfo');
